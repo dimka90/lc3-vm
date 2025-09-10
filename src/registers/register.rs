@@ -1,4 +1,4 @@
-
+use crate::registers::flags::{ConditionalFlag, ConditionalFlagtrait};
 #[repr(u16)]
 #[derive(Debug, Clone)]
 pub enum Registers{
@@ -11,7 +11,7 @@ pub enum Registers{
     R6,
     R7,
     PC,
-    RCOND,
+    CC,
     RCOUNT
 
 }
@@ -30,5 +30,11 @@ impl  Register {
     }
     pub fn read(self, r: Registers) -> u16{
         self.locations[r as usize]
+    }
+    pub fn update_flag(mut self, value: u16){
+        let flag = ConditionalFlag::from_value(value);
+        println!("Flag to update");
+        self.locations[Registers::CC as usize] = flag as u16;
+        println!("Value at Reg 9: {}", self.locations[Registers::CC as usize]  )
     }
 }

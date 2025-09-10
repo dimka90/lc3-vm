@@ -23,4 +23,5 @@ fn main() {
     let signed = sign_extend(imm5, 5);
     println!("{:#X}", signed);
     println!("{:#b}", signed);
+    register.update_flag(0b1111_1111_111_11110);
 }
