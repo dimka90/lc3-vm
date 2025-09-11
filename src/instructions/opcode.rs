@@ -1,6 +1,7 @@
 use std::{io::ErrorKind};
 use crate::util::utils::sign_extend;
-use crate::constants::constants::BIT_COUNT;
+use crate::constants::constants::BITS_COUNT;
+use crate::vm::{self, Vm};
 #[repr(u16)]
 pub enum Opcode {
     BR = 0, /* branch */
@@ -23,7 +24,7 @@ pub enum Opcode {
 
 pub trait OpcodeTrait {
 fn from_instruction(opcode: u16) -> Option<Opcode>;
-// fn add(instr: u16) -> Result<u16, ErrorKind>;
+fn add(instr: u16, vm: &mut Vm);
 }
 impl OpcodeTrait for Opcode {
     fn from_instruction(opcode: u16) -> Option<Opcode> {
@@ -34,14 +35,20 @@ impl OpcodeTrait for Opcode {
         }
     }
 
-    // fn add(instr: u16) -> Result<u16, ErrorKind> {
-    //      let r0 = (instr >> 9) & 0x7;
-    //      let r1: u16 = (instr >> 6) & 0x7;
-    //      let imm_flag =(instr >> 5) & 0x1;
+    fn add(instr: u16, vm: &mut Vm){
+         let dr = (instr >> 9) & 0x7;
+         let sr1: u16 = (instr >> 6) & 0x7;
+         let imm_flag =(instr >> 5) & 0x1;
 
-    //      if imm_flag == 1{
-    //         let imm5 = sign_extend(instr & 0x1, BIT_COUNT);
-    //      };
+         if imm_flag == 1{
+            let imm5 = sign_extend(instr & 0x1, BITS_COUNT);
+            vm.register.locations[dr as usize] = sr1 + imm5;
+         }
+         else{
+             let sr2 = instr & 0x7;
+             vm.register.locations[dr as usize] = sr1 + sr2;
+         }
+         vm.register.update_flag(dr);
 
-    // }
+    }
 }

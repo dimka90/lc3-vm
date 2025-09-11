@@ -31,7 +31,7 @@ impl  Register {
     pub fn read(self, r: Registers) -> u16{
         self.locations[r as usize]
     }
-    pub fn update_flag(mut self, value: u16){
+    pub fn update_flag(&mut self, value: u16){
         let flag = ConditionalFlag::from_value(value);
         println!("Flag to update");
         self.locations[Registers::CC as usize] = flag as u16;
