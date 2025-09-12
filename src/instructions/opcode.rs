@@ -1,5 +1,5 @@
 
-use crate::registers::register::{Register, Registers};
+use crate::registers::register::{RegisterFile, Register};
 use crate::util::utils::sign_extend;
 use crate::constants::constants::BITS_COUNT;
 use crate::vm::{ Vm};
