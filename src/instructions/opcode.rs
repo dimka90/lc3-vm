@@ -1,8 +1,10 @@
-use std::{io::ErrorKind};
+
+use crate::registers::register::{Register, Registers};
 use crate::util::utils::sign_extend;
 use crate::constants::constants::BITS_COUNT;
-use crate::vm::{self, Vm};
+use crate::vm::{ Vm};
 #[repr(u16)]
+#[derive(Debug)]
 pub enum Opcode {
     BR = 0, /* branch */
     ADD,    /* add  */
@@ -40,13 +42,14 @@ impl OpcodeTrait for Opcode {
          let sr1: u16 = (instr >> 6) & 0x7;
          let imm_flag =(instr >> 5) & 0x1;
 
+         let src1_value = vm.register.locations[sr1 as usize];
          if imm_flag == 1{
-            let imm5 = sign_extend(instr & 0x1, BITS_COUNT);
-            vm.register.locations[dr as usize] = sr1 + imm5;
-         }
+            let imm5 = sign_extend(instr & 0x1F, BITS_COUNT);
+            vm.register.locations[dr as usize] = src1_value.wrapping_add(imm5);         }
          else{
-             let sr2 = instr & 0x7;
-             vm.register.locations[dr as usize] = sr1 + sr2;
+             let src2 = instr & 0x7;
+             let src2_value = vm.register.locations[src2 as usize];
+             vm.register.locations[dr as usize] = src1_value.wrapping_add(src2_value);
          }
          vm.register.update_flag(dr);
 
